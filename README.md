@@ -122,8 +122,8 @@ They cover safe and unsafe states, a granted request, a request that must wait, 
 
 <table align="center">
   <tr>
-    <td align="center"><strong>Justine Garnace</strong><br>Desktop GUI &amp; integration</td>
-    <td align="center"><strong>Gabriel Leyma</strong><br>Algorithm core</td>
+    <td align="center"><strong>Justine Garnace</strong><br>Algorithm core &amp; integration</td>
+    <td align="center"><strong>Gabriel Leyma</strong><br>Desktop GUI</td>
     <td align="center"><strong>Danielle Madrigal</strong><br>Tests &amp; evidence</td>
     <td align="center"><strong>Harvie Dela Roca</strong><br>README &amp; user guide</td>
     <td align="center"><strong>Mark Verdadero</strong><br>Demo &amp; repository guide</td>
