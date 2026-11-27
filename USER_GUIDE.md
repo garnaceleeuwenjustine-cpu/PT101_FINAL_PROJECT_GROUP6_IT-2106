@@ -77,6 +77,8 @@ After a check, select the results tab that you need:
 - **Safety Trace** — each process check, its Need and Work vectors, eligibility result, released Allocation, and updated Finish flags.
 - **Request Checks** — the request-to-Need and request-to-Available comparisons, tentative safety result, and final decision.
 
+Click **Expand Results** in the workbench header to open the selected table in a maximized window. Press **Escape** or click **Close Full View** to return to the main window.
+
 In **Safety Trace**, the first row shows the starting Work and Finish state. In the Finish column, `✓` means True (finished) and `·` means False (not finished).
 
 The summary cards above the tables show:

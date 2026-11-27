@@ -313,13 +313,21 @@ class BankersGUI:
         self.right_card.grid_columnconfigure(0, weight=1)
         heading = tk.Frame(self.right_card, bg=COLORS["panel"])
         heading.grid(row=0, column=0, sticky="ew", padx=20, pady=(18, 12))
+        heading.grid_columnconfigure(0, weight=1)
         tk.Label(
             heading,
             text="02  /  SAFETY WORKBENCH",
             bg=COLORS["panel"],
             fg=COLORS["text"],
             font=("Segoe UI", 12, "bold"),
-        ).pack(anchor="w")
+        ).grid(row=0, column=0, sticky="w")
+        self._button(
+            heading,
+            "EXPAND RESULTS",
+            self.open_full_table,
+            kind="quiet",
+            compact=True,
+        ).grid(row=0, column=1, sticky="e")
 
         mode_bar = tk.Frame(self.right_card, bg=COLORS["panel"])
         mode_bar.grid(row=1, column=0, sticky="ew", padx=20, pady=(0, 12))
@@ -395,18 +403,14 @@ class BankersGUI:
         self.output_tabs.add(self.trace_tab, text="SAFETY TRACE")
         self.output_tabs.add(self.request_tab, text="REQUEST CHECKS")
 
-        self.need_table = self._make_table(
-            self.need_tab,
-            (
+        self.result_table_specs = {
+            "NEED MATRIX": (
                 ("process", "Process", 78, "center"),
                 ("allocation", "Allocation", 140, "center"),
                 ("maximum", "Max", 140, "center"),
                 ("need", "Need = Max − Allocation", 190, "center"),
             ),
-        )
-        self.trace_table = self._make_table(
-            self.trace_tab,
-            (
+            "SAFETY TRACE": (
                 ("pass", "Pass", 55, "center"),
                 ("process", "Process", 75, "center"),
                 ("need", "Need", 105, "center"),
@@ -416,18 +420,24 @@ class BankersGUI:
                 ("work_after", "Work after", 100, "center"),
                 ("finish", "Finish flags", 220, "w"),
             ),
-        )
-        self.request_table = self._make_table(
-            self.request_tab,
-            (
+            "REQUEST CHECKS": (
                 ("check", "Request check", 160, "w"),
                 ("compared", "Compared values", 330, "center"),
                 ("result", "Result", 100, "center"),
             ),
+        }
+        self.need_table = self._make_table(
+            self.need_tab, self.result_table_specs["NEED MATRIX"]
+        )
+        self.trace_table = self._make_table(
+            self.trace_tab, self.result_table_specs["SAFETY TRACE"]
+        )
+        self.request_table = self._make_table(
+            self.request_tab, self.result_table_specs["REQUEST CHECKS"]
         )
         self._set_placeholder_rows()
 
-    def _make_table(self, parent, columns):
+    def _make_table(self, parent, columns, stretch_all=False):
         parent.grid_rowconfigure(0, weight=1)
         parent.grid_columnconfigure(0, weight=1)
         table = ttk.Treeview(
@@ -443,7 +453,7 @@ class BankersGUI:
                 width=width,
                 minwidth=min(width, 70),
                 anchor=anchor,
-                stretch=column_id in {"need", "finish", "compared"},
+                stretch=stretch_all or column_id in {"need", "finish", "compared"},
             )
         vertical = ttk.Scrollbar(
             parent,
@@ -469,6 +479,65 @@ class BankersGUI:
         table.tag_configure("unsafe", foreground=COLORS["danger"])
         table.tag_configure("wait", foreground=COLORS["warning"])
         return table
+
+    def open_full_table(self):
+        tab_name = self.output_tabs.tab(self.output_tabs.select(), "text")
+        tables = {
+            "NEED MATRIX": self.need_table,
+            "SAFETY TRACE": self.trace_table,
+            "REQUEST CHECKS": self.request_table,
+        }
+        source_table = tables[tab_name]
+        columns = self.result_table_specs[tab_name]
+
+        window = tk.Toplevel(self.root)
+        window.title(f"{tab_name} | Fleischer’s Finest Five")
+        window.configure(bg=COLORS["background"])
+        window.geometry("1280x820")
+        window.minsize(900, 600)
+        try:
+            window.state("zoomed")
+        except tk.TclError:
+            window.geometry("1600x900")
+
+        header = tk.Frame(window, bg=COLORS["background"])
+        header.pack(fill="x", padx=24, pady=(20, 14))
+        header.grid_columnconfigure(0, weight=1)
+        tk.Label(
+            header,
+            text=tab_name,
+            bg=COLORS["background"],
+            fg=COLORS["text"],
+            font=("Segoe UI", 18, "bold"),
+        ).grid(row=0, column=0, sticky="w")
+        self._button(
+            header,
+            "CLOSE FULL VIEW",
+            window.destroy,
+            kind="quiet",
+        ).grid(row=0, column=1, sticky="e")
+
+        table_host = tk.Frame(
+            window,
+            bg=COLORS["panel"],
+            highlightbackground=COLORS["border"],
+            highlightthickness=1,
+            padx=10,
+            pady=10,
+        )
+        table_host.pack(fill="both", expand=True, padx=24, pady=(0, 24))
+        table_host.grid_rowconfigure(0, weight=1)
+        table_host.grid_columnconfigure(0, weight=1)
+        table = self._make_table(table_host, columns, stretch_all=True)
+        for item in source_table.get_children(""):
+            table.insert(
+                "",
+                "end",
+                values=source_table.item(item, "values"),
+                tags=source_table.item(item, "tags"),
+            )
+        window.bind("<Escape>", lambda _event: window.destroy())
+        window.lift()
 
     def _set_placeholder_rows(self):
         self._fill_table(self.need_table, (("—", "Run Safety Check", "", ""),))
