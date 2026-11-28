@@ -3,8 +3,8 @@
 </p>
 
 <div align="center">
-  <h1>✨ FLEISCHER’S FINEST FIVE ✨</h1>
-  <h3>THE BOOP-OOP-A-DOOS · Banker’s Algorithm</h3>
+  <h1>✨ NEON BANKER’S ALGORITHM ✨</h1>
+  <h3>FLEISCHER’S FINEST FIVE · THE BOOP-OOP-A-DOOS</h3>
 </div>
 
 <p align="center">
@@ -21,7 +21,7 @@
 
 The Fleischer’s Finest Five Banker’s Algorithm Simulator demonstrates how an operating system can avoid unsafe resource allocations. Enter a system state and follow the Safety Algorithm as it compares each process’s remaining Need with the current Work vector.
 
-The neon nightclub-inspired interface combines a dark purple background with neon pink and cyan accents. Numeric values can be typed or adjusted with buttons, and the calculation appears in tables instead of a plain text dump.
+The neon nightclub-inspired interface combines a dark purple background with neon pink and cyan accents. Numeric values can be typed or adjusted with buttons, and the calculation appears in tables instead of a plain text dump. An included jazz-style loop and soft button chimes add to the club atmosphere; both can be toggled independently in the header.
 
 ### Main Features
 
@@ -32,6 +32,7 @@ The neon nightclub-inspired interface combines a dark purple background with neo
 | **Safety Trace** | Tables each pass, Need-versus-Work comparison, resource release, updated Work, and Finish flags. |
 | **Resource Request** | Checks a request against Need and Available, then checks whether a tentative allocation remains safe. |
 | **Expanded Results** | Opens the selected result table in a maximized window for easier viewing. |
+| **Nightclub Audio** | Plays the included looping jazz track and short button chimes, with separate music and effects controls. |
 | **Typed and Button Inputs** | Enter whole numbers directly or use the `−` and `+` controls; the results remain read-only. |
 | **Built-in Limits** | Allows 1–8 processes, 1–5 resource types, and 0–99 units, while enforcing Allocation, Max, and Total constraints. |
 | **Classroom Example** | Opens with the familiar five-process, three-resource example loaded. |
@@ -60,6 +61,7 @@ A state is **SAFE** when every process can finish in some order. **UNSAFE** mean
     ├── bankers_simulator.py
     ├── test_bankers_simulator.py
     ├── fleischers_finest_five_logo.png
+    ├── nightclub_jazz.wav
     ├── README.md
     ├── USER_GUIDE.md
     ├── TEST_EVIDENCE.md
@@ -80,7 +82,7 @@ A state is **SAFE** when every process can finish in some order. **UNSAFE** mean
 
 - **Python 3.15** on Windows
 - Tkinter, included with the standard Windows Python installer
-- No third-party Python packages
+- No third-party Python packages; the audio controls use Python’s built-in Windows sound module.
 
 ### Steps
 

@@ -20,7 +20,11 @@ Or select the **Python 3.15** interpreter in VS Code and run:
 python bankers_gui.py
 ```
 
-The neon nightclub-themed desktop window opens with the course sample loaded and the Fleischer’s Finest Five logo in its header. Numeric fields accept typed whole numbers, and each field also has `−` and `+` buttons. Press **Enter** or click any app button to apply typed values. Results are shown as read-only tables. Choose:
+The neon nightclub-themed desktop window opens with the course sample loaded and the Fleischer’s Finest Five logo in its header. Numeric fields accept typed whole numbers, and each field also has `−` and `+` buttons. Press **Enter** or click any app button to apply typed values. Results are shown as read-only tables.
+
+The included jazz loop starts automatically on Windows. Use **MUSIC: ON/OFF** and **SFX: ON/OFF** in the header to control background music and button chimes separately. The audio file is included in the project, so music works offline. On non-Windows systems, audio controls are unavailable while the simulator remains usable.
+
+Main actions:
 
 - **Safety Check** — the required Topic 5 computation.
 - **Resource Request** — an optional extension that tests a tentative allocation.

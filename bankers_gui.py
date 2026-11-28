@@ -1,8 +1,14 @@
 """Typed and button-controlled desktop interface for Banker’s Algorithm."""
 
 import tkinter as tk
+import threading
 from pathlib import Path
 from tkinter import ttk
+
+try:
+    import winsound
+except ImportError:
+    winsound = None
 
 from bankers_simulator import (
     BankerState,
@@ -75,12 +81,18 @@ class ScrollableFrame(tk.Frame):
 class BankersGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Fleischer’s Finest Five | Banker’s Algorithm")
+        self.root.title("Neon Banker’s Algorithm | Fleischer’s Finest Five")
         self.root.geometry("1420x900")
         self.root.minsize(1180, 760)
         self.root.configure(bg=COLORS["background"])
         self.root.option_add("*Font", ("Segoe UI", 10))
         self._configure_table_styles()
+
+        self.music_path = Path(__file__).resolve().with_name("nightclub_jazz.wav")
+        self.button_sounds_available = winsound is not None
+        self.music_available = self.button_sounds_available and self.music_path.is_file()
+        self.music_enabled = self.music_available
+        self.button_sounds_enabled = self.button_sounds_available
 
         self.process_count = 5
         self.resource_count = 3
@@ -96,6 +108,10 @@ class BankersGUI:
 
         self._build_layout()
         self.load_example()
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
+        if self.music_enabled and not self._start_music():
+            self.music_enabled = False
+            self._sync_audio_buttons()
 
     def _configure_table_styles(self):
         style = ttk.Style(self.root)
@@ -163,6 +179,72 @@ class BankersGUI:
     def _resource_labels(count):
         return tuple(chr(ord("A") + index) for index in range(count))
 
+    def _music_button_text(self):
+        if not self.music_available:
+            return "♫ MUSIC: N/A"
+        return "♫ MUSIC: ON" if self.music_enabled else "♫ MUSIC: OFF"
+
+    def _button_sounds_text(self):
+        if not self.button_sounds_available:
+            return "SFX: N/A"
+        return "SFX: ON" if self.button_sounds_enabled else "SFX: OFF"
+
+    def _sync_audio_buttons(self):
+        if hasattr(self, "music_button"):
+            self.music_button.configure(text=self._music_button_text())
+        if hasattr(self, "button_sounds_button"):
+            self.button_sounds_button.configure(text=self._button_sounds_text())
+
+    def _start_music(self):
+        if not self.music_available or winsound is None:
+            return False
+        try:
+            winsound.PlaySound(
+                str(self.music_path),
+                winsound.SND_FILENAME | winsound.SND_LOOP | winsound.SND_ASYNC,
+            )
+        except (OSError, RuntimeError):
+            return False
+        return True
+
+    @staticmethod
+    def _stop_music():
+        if winsound is not None:
+            try:
+                winsound.PlaySound(None, 0)
+            except (OSError, RuntimeError):
+                pass
+
+    def _toggle_music(self):
+        self.music_enabled = not self.music_enabled
+        if self.music_enabled and not self._start_music():
+            self.music_enabled = False
+            self._set_feedback("Could not start the included jazz loop.")
+        elif not self.music_enabled:
+            self._stop_music()
+        self._sync_audio_buttons()
+
+    def _toggle_button_sounds(self):
+        self.button_sounds_enabled = not self.button_sounds_enabled
+        self._sync_audio_buttons()
+
+    def _play_button_sound(self):
+        if not self.button_sounds_enabled or winsound is None:
+            return
+
+        def play_chime():
+            try:
+                winsound.Beep(880, 35)
+                winsound.Beep(1320, 30)
+            except RuntimeError:
+                pass
+
+        threading.Thread(target=play_chime, name="button-chime", daemon=True).start()
+
+    def _on_close(self):
+        self._stop_music()
+        self.root.destroy()
+
     def _build_layout(self):
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_rowconfigure(1, weight=1)
@@ -201,17 +283,17 @@ class BankersGUI:
             ).pack(padx=5, pady=5)
         tk.Label(
             header,
-            text="FLEISCHER’S FINEST FIVE",
+            text="NEON BANKER’S ALGORITHM",
             bg=COLORS["background"],
             fg=COLORS["text"],
             font=("Segoe UI", 22, "bold"),
         ).grid(row=0, column=1, sticky="w")
         tk.Label(
             header,
-            text="THE BOOP-OOP-A-DOOS  ·  PT 101  ·  TOPIC 5: DEADLOCK AVOIDANCE",
+            text="FLEISCHER’S FINEST FIVE  ·  THE BOOP-OOP-A-DOOS  ·  PT 101  ·  TOPIC 5",
             bg=COLORS["background"],
             fg=COLORS["blue"],
-            font=("Segoe UI", 9, "bold"),
+            font=("Segoe UI", 8, "bold"),
         ).grid(row=1, column=1, sticky="w", pady=(3, 0))
         tk.Label(
             header,
@@ -221,7 +303,27 @@ class BankersGUI:
             font=("Segoe UI", 9, "bold"),
             padx=14,
             pady=9,
-        ).grid(row=0, column=2, rowspan=2, sticky="e")
+        ).grid(row=0, column=2, sticky="e", pady=(0, 4))
+        audio_controls = tk.Frame(header, bg=COLORS["background"])
+        audio_controls.grid(row=1, column=2, sticky="e")
+        self.music_button = self._button(
+            audio_controls,
+            self._music_button_text(),
+            self._toggle_music,
+            kind="quiet",
+            compact=True,
+            enabled=self.music_available,
+        )
+        self.music_button.pack(side="left", padx=(0, 4))
+        self.button_sounds_button = self._button(
+            audio_controls,
+            self._button_sounds_text(),
+            self._toggle_button_sounds,
+            kind="quiet",
+            compact=True,
+            enabled=self.button_sounds_available,
+        )
+        self.button_sounds_button.pack(side="left")
         tk.Frame(self.root, bg=COLORS["accent"], height=2).grid(
             row=0, column=0, sticky="sew", padx=28
         )
@@ -1247,6 +1349,7 @@ class BankersGUI:
         background, foreground, active = palette[kind]
 
         def invoke():
+            self._play_button_sound()
             self._commit_pending_entries()
             command()
 
