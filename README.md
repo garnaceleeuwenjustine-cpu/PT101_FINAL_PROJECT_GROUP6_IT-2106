@@ -31,6 +31,7 @@ The neon nightclub-inspired interface combines a dark purple background with neo
 | **Need Matrix** | Displays each process’s Allocation, Max, and calculated Need. |
 | **Safety Trace** | Tables each pass, Need-versus-Work comparison, resource release, updated Work, and Finish flags. |
 | **Resource Request** | Checks a request against Need and Available, then checks whether a tentative allocation remains safe. |
+| **Expanded Results** | Opens the selected result table in a maximized window for easier viewing. |
 | **Typed and Button Inputs** | Enter whole numbers directly or use the `−` and `+` controls; the results remain read-only. |
 | **Built-in Limits** | Allows 1–8 processes, 1–5 resource types, and 0–99 units, while enforcing Allocation, Max, and Total constraints. |
 | **Classroom Example** | Opens with the familiar five-process, three-resource example loaded. |
@@ -62,8 +63,6 @@ A state is **SAFE** when every process can finish in some order. **UNSAFE** mean
     ├── README.md
     ├── USER_GUIDE.md
     ├── TEST_EVIDENCE.md
-    ├── CONTRIBUTING.md
-    ├── CONTRIBUTION_PLAN.md
     └── DEMO_SCRIPT.md
 
 ### Main Roles
@@ -71,7 +70,7 @@ A state is **SAFE** when every process can finish in some order. **UNSAFE** mean
 - `bankers_gui.py` provides the desktop interface, input controls, result tables, and group branding.
 - `bankers_simulator.py` implements the data model, Safety Algorithm, request check, and terminal interface.
 - `test_bankers_simulator.py` covers safe and unsafe states, requests, and invalid data.
-- The Markdown guides explain setup, inputs, test evidence, and the five-member commit workflow.
+- The Markdown guides explain setup, inputs, test evidence, and the project demonstration.
 
 ---
 
@@ -85,9 +84,8 @@ A state is **SAFE** when every process can finish in some order. **UNSAFE** mean
 
 ### Steps
 
-1. Make sure all five members’ assigned files have been added to the same repository root.
-2. Open that project folder in VS Code.
-3. Run the desktop simulator from the VS Code terminal:
+1. Open the project folder in VS Code.
+2. Run the desktop simulator from the VS Code terminal:
 
        py -3.15 bankers_gui.py
 
@@ -126,11 +124,9 @@ They cover safe and unsafe states, a granted request, a request that must wait, 
     <td align="center"><strong>Gabriel Leyma</strong><br>Desktop GUI</td>
     <td align="center"><strong>Danielle Madrigal</strong><br>Tests &amp; evidence</td>
     <td align="center"><strong>Harvie Dela Roca</strong><br>README &amp; user guide</td>
-    <td align="center"><strong>Mark Verdadero</strong><br>Demo &amp; repository guide</td>
+    <td align="center"><strong>Mark Verdadero</strong><br>Demo &amp; presentation</td>
   </tr>
 </table>
-
-See `CONTRIBUTION_PLAN.md` for the proposed file assignments. Record actual work only after members complete it.
 
 ---
 
@@ -138,7 +134,7 @@ See `CONTRIBUTION_PLAN.md` for the proposed file assignments. Record actual work
 
 The algorithm and terminology follow the course materials supplied for the project: *Final Project – Guideline PT101*, *Deadlock*, and *Chapter 6 – Other sample for Bankers Algorithm*.
 
-AI assistance was used to draft the starter implementation, documentation, and test cases. Group members should review and understand the code, run it on their own machines, and disclose assistance as required by course policy.
+Generative AI assisted with parts of the code and documentation. The group should review the final project and follow the course policy for acknowledging assistance.
 
 ---
 
